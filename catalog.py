@@ -63,3 +63,57 @@ def remove_piece(catalog: list, piece_id: str) -> bool:
         return True
     except ValueError:
         return False
+
+def get_catalog_summary(catalog: list) -> dict:
+    if not isinstance(catalog, list):
+        raise TypeError("El catálogo debe ser una lista.")
+    summary = {}
+    for piece in catalog:
+        category = piece["category"]
+        summary[category] = summary.get(category, 0) + 1 #suma de 1 los productos que compartan las misma categoria
+    return summary
+
+
+def get_pieces_by_category(catalog: list, category: str) -> list:
+    if not isinstance(catalog, list):
+        raise TypeError("El catálogo debe ser una lista.")
+    clean_category = category.strip().lower()
+    return [
+        piece["name"]
+        for piece in catalog
+        if piece["category"].lower() == clean_category
+    ]
+
+
+def piece_exists(catalog: list, piece_id: str) -> bool:
+    return find_piece_by_id(catalog, piece_id) is not None
+
+
+def filter_by_status(catalog: list, status: str) -> list:
+    if not isinstance(catalog, list):
+        raise TypeError("El catálogo debe ser una lista.")
+    validate_status(status)
+    clean_status = status.strip().lower()
+
+    return [piece for piece in catalog if piece["status"] == clean_status]
+
+
+def filter_by_min_price(catalog: list, min_price: float) -> list:
+    if not isinstance(catalog, list):
+        raise TypeError("El catálogo debe ser una lista.")
+
+    if not isinstance(min_price, (int, float)) or isinstance(min_price, bool):
+        raise ValueError("El precio mínimo debe ser un valor numérico.")
+
+    return [piece for piece in catalog if piece["price"] > min_price]
+
+
+def get_average_price(catalog: list) -> float:
+    if not isinstance(catalog, list):
+        raise TypeError("El catálogo debe ser una lista.")
+
+    if not catalog:
+        return 0.0
+
+    total_price = sum(piece["price"] for piece in catalog)
+    return round(total_price / len(catalog), 2)
