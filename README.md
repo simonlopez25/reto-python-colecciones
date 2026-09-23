@@ -3,9 +3,6 @@
 # 🏆 Catálogo de Coleccionables
 
 ### _Reto Python — Colecciones Nativas_
-
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=18&pause=1200&color=A78BFA&center=true&vCenter=true&width=500&height=40&lines=list+%7C+dict+%7C+set+...+en+acción+🐍;Gestiona+tus+piezas+únicas+🎴;Código+limpio%2C+sin+dependencias+✨" alt="Typing SVG" />
-
 <br/>
 
 [![Python](https://img.shields.io/badge/Python-3.14+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
