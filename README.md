@@ -1,18 +1,23 @@
 ﻿<div align="center">
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=FFD700&center=true&vCenter=true&width=600&lines=🏆+Catálogo+de+Coleccionables;Reto+Python+—+Colecciones+Nativas" alt="Typing SVG" />
+# 🏆 Catálogo de Coleccionables
+
+### _Reto Python — Colecciones Nativas_
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=18&pause=1200&color=A78BFA&center=true&vCenter=true&width=500&height=40&lines=list+%7C+dict+%7C+set+...+en+acción+🐍;Gestiona+tus+piezas+únicas+🎴;Código+limpio%2C+sin+dependencias+✨" alt="Typing SVG" />
 
 <br/>
 
 [![Python](https://img.shields.io/badge/Python-3.14+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/Versión-0.1.0-6366f1?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/simonlopez25/reto-python-colecciones)
-[![Estado](https://img.shields.io/badge/Estado-Completado-22c55e?style=for-the-badge&logo=checkmarx&logoColor=white)](#)
-[![Dependencias](https://img.shields.io/badge/Dependencias-Ninguna-f59e0b?style=for-the-badge&logo=leaf&logoColor=white)](#)
+[![Version](https://img.shields.io/badge/Versión-0.1.0-6366f1?style=for-the-badge&logoColor=white)](https://github.com/simonlopez25/reto-python-colecciones)
+[![Estado](https://img.shields.io/badge/Estado-Completado_✅-22c55e?style=for-the-badge&logoColor=white)](#)
+
+[![Dependencias](https://img.shields.io/badge/Sin_Dependencias-100%25_Python_Puro-f59e0b?style=for-the-badge&logo=python&logoColor=white)](#)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-ec4899?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](#)
 
 <br/>
 
-> *"De coleccionista a desarrollador — la colección más valiosa es el código limpio."*
+> 💬 *"De coleccionista a desarrollador — la colección más valiosa es el código limpio."*
 
 </div>
 
