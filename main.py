@@ -1,11 +1,4 @@
-from catalog import (
-    add_piece,
-    filter_by_status,
-    find_piece_by_id,
-    get_average_price,
-    list_pieces,
-    remove_piece,
-)
+from catalog import *
 
 
 def display_menu() -> None:
@@ -24,26 +17,30 @@ def display_menu() -> None:
 
 def handle_add_piece(catalog: list) -> None:
     print("\n--- AGREGAR NUEVA PIEZA ---")
-    piece_id = input("ID de la pieza: ")
-    name = input("Nombre de la pieza: ")
-    category = input("Categoría: ")
 
-    price_raw = input("Precio: ")
-    try:
-        price = float(price_raw)
-    except ValueError:
-        print(" Error: El precio debe ser un número válido.")
-        return
+    while True:
+        try:
+            piece_id = input("ID de la pieza: ")
+            name = input("Nombre de la pieza: ")
+            category = input("Categoría: ")
 
-    status = input("Estado (disponible, reservada, vendida): ")
-    description = input("Descripción (debe incluir 'usada' o 'certificada'): ")
+            price_raw = input("Precio: ")
+            try:
+                price = float(price_raw)
+            except ValueError:
+                print(" Error: El precio debe ser un número válido.\n")
+                continue
 
-    try:
-        new_piece = add_piece(piece_id, name, category, price, status, description)
-        catalog.append(new_piece)
-        print(f" ¡Pieza '{new_piece['name']}' agregada con éxito!")
-    except ValueError as error:
-        print(f" Error de validación: {error}")
+            status = input("Estado (disponible, reservada, vendida): ")
+            description = input("Descripción (debe incluir 'usada' o 'certificada'): ")
+
+            new_piece = add_piece(catalog, piece_id, name, category, price, status, description)
+            print(f" ¡Pieza '{new_piece['name']}' agregada con éxito!")
+            break
+
+        except ValueError as error:
+            print(f" Error de validación: {error}")
+            print(" Por favor, intente ingresar la pieza de nuevo.\n")
 
 
 def handle_list_pieces(catalog: list) -> None:
@@ -128,5 +125,6 @@ def main() -> None:
         else:
             print(" Opción no válida. Por favor, seleccione un número entre 1 y 7.")
 
-if __name__ == "__main__": # me ayuda a siempre ejecutar primero la main, Python le asigna a __name__ el valor de "__main__".
+
+if __name__ == "__main__":
     main()

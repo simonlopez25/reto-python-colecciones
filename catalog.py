@@ -1,12 +1,12 @@
-from validations import (
-    validate_description,
-    validate_not_empty,
-    validate_price,
-    validate_status,
-)
+from validations import *
+
+def _validate_catalog(catalog: list):
+    if not isinstance(catalog, list):
+        raise TypeError("El catálogo debe ser una lista.")
 
 
 def add_piece(
+        catalog: list,
         piece_id: str,
         name: str,
         category: str,
@@ -14,6 +14,8 @@ def add_piece(
         status: str,
         description: str,
 ) -> dict:
+    _validate_catalog(catalog)
+
     validate_not_empty(piece_id, "id")
     validate_not_empty(name, "name")
     validate_not_empty(category, "category")
@@ -22,26 +24,32 @@ def add_piece(
     validate_status(status)
     validate_description(description)
 
-    return {
-        "id": piece_id.strip(),
+    clean_id = piece_id.strip()
+
+    if piece_exists(catalog, clean_id):
+        raise ValueError(f"Ya existe una pieza con el ID '{clean_id}'.")
+
+    new_piece = {
+        "id": clean_id,
         "name": name.strip(),
         "category": category.strip(),
-        "price": price,
+        "price": float(price),
         "status": status.strip().lower(),
         "description": description.strip(),
     }
 
+    catalog.append(new_piece)
+    return new_piece
+
 
 def list_pieces(catalog: list) -> list:
-    if not isinstance(catalog, list):
-        raise TypeError("El catálogo debe ser una lista.")
+    _validate_catalog(catalog)
     return [piece["name"] for piece in catalog]
 
 
 def find_piece_by_id(catalog: list, piece_id: str) -> dict | None:
-    if not isinstance(catalog, list):
-        raise TypeError("El catálogo debe ser una lista.")
-    clean_id = piece_id.strip()
+    _validate_catalog(catalog)
+    clean_id = str(piece_id).strip()
 
     for piece in catalog:
         if piece["id"] == clean_id:
@@ -50,8 +58,7 @@ def find_piece_by_id(catalog: list, piece_id: str) -> dict | None:
 
 
 def remove_piece(catalog: list, piece_id: str) -> bool:
-    if not isinstance(catalog, list):
-        raise TypeError("El catálogo debe ser una lista.")
+    _validate_catalog(catalog)
     try:
         piece = find_piece_by_id(catalog, piece_id)
 
@@ -64,23 +71,21 @@ def remove_piece(catalog: list, piece_id: str) -> bool:
 
 
 def get_catalog_summary(catalog: list) -> dict:
-    if not isinstance(catalog, list):
-        raise TypeError("El catálogo debe ser una lista.")
+    _validate_catalog(catalog)
     summary = {}
     for piece in catalog:
         category = piece["category"]
-        summary[category] = summary.get(category, 0) + 1  # suma de 1 los productos que compartan las misma categoria
+        summary[category] = summary.get(category, 0) + 1
     return summary
 
 
 def get_pieces_by_category(catalog: list, category: str) -> list:
-    if not isinstance(catalog, list):
-        raise TypeError("El catálogo debe ser una lista.")
+    _validate_catalog(catalog)
     clean_category = category.strip().lower()
     return [
         piece["name"]
         for piece in catalog
-        if piece["category"].lower() == clean_category
+        if piece["category"].strip().lower() == clean_category
     ]
 
 
@@ -89,8 +94,7 @@ def piece_exists(catalog: list, piece_id: str) -> bool:
 
 
 def filter_by_status(catalog: list, status: str) -> list:
-    if not isinstance(catalog, list):
-        raise TypeError("El catálogo debe ser una lista.")
+    _validate_catalog(catalog)
     validate_status(status)
     clean_status = status.strip().lower()
 
@@ -98,18 +102,16 @@ def filter_by_status(catalog: list, status: str) -> list:
 
 
 def filter_by_min_price(catalog: list, min_price: float) -> list:
-    if not isinstance(catalog, list):
-        raise TypeError("El catálogo debe ser una lista.")
+    _validate_catalog(catalog)
 
     if not isinstance(min_price, (int, float)) or isinstance(min_price, bool):
         raise ValueError("El precio mínimo debe ser un valor numérico.")
 
-    return [piece for piece in catalog if piece["price"] > min_price]
+    return [piece for piece in catalog if piece["price"] >= min_price]
 
 
 def get_average_price(catalog: list) -> float:
-    if not isinstance(catalog, list):
-        raise TypeError("El catálogo debe ser una lista.")
+    _validate_catalog(catalog)
 
     if not catalog:
         return 0.0

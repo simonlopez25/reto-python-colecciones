@@ -32,8 +32,9 @@ def sample_catalog():
     ]
 
 
-def test_add_piece_success():
+def test_add_piece_success(sample_catalog):
     result = add_piece(
+        catalog=sample_catalog,
         piece_id=" 10 ",
         name=" Collar de Plata ",
         category=" Joyería ",
@@ -49,6 +50,21 @@ def test_add_piece_success():
         "status": "disponible",
         "description": "Collar certificada en buen estado",
     }
+    assert len(sample_catalog) == 4
+    assert piece_exists(sample_catalog, "10") is True
+
+
+def test_add_piece_duplicate_id(sample_catalog):
+    with pytest.raises(ValueError, match="Ya existe una pieza con el ID '1'."):
+        add_piece(
+            catalog=sample_catalog,
+            piece_id="1",
+            name="Anillo Duplicado",
+            category="Joyería",
+            price=100.0,
+            status="disponible",
+            description="Descripción de prueba",
+        )
 
 
 def test_list_pieces(sample_catalog):
