@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # 🏆 Catálogo de Coleccionables
 
@@ -7,9 +7,8 @@
 
 [![Python](https://img.shields.io/badge/Python-3.14+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Version](https://img.shields.io/badge/Versión-0.1.0-6366f1?style=for-the-badge&logoColor=white)](https://github.com/simonlopez25/reto-python-colecciones)
-[![Estado](https://img.shields.io/badge/Estado-Completado_✅-22c55e?style=for-the-badge&logoColor=white)](#)
-
-[![Dependencias](https://img.shields.io/badge/Sin_Dependencias-100%25_Python_Puro-f59e0b?style=for-the-badge&logo=python&logoColor=white)](#)
+[![Tests](https://img.shields.io/badge/Tests-46%20Passed-22c55e?style=for-the-badge&logo=pytest&logoColor=white)](#-pruebas-automatizadas-con-pytest)
+[![Pytest](https://img.shields.io/badge/Pytest-9.1.1-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](https://pytest.org/)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-ec4899?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](#)
 
 <br/>
@@ -33,10 +32,14 @@ Sistema de gestión de **catálogo de coleccionables** por consola, construido *
 ```
 reto-python-colecciones/
 │
-├── 🧠  main.py           →  Interfaz de usuario / menú interactivo
-├── 📦  catalog.py        →  Lógica del catálogo (el corazón del sistema)
-├── 🛡️   validations.py   →  Validaciones de datos robustas
-└── ⚙️   pyproject.toml   →  Configuración del proyecto (uv)
+├── 🧠  main.py               →  Interfaz de usuario / menú interactivo
+├── 📦  catalog.py            →  Lógica del catálogo (el corazón del sistema)
+├── 🛡️   validations.py       →  Validaciones de datos robustas
+├── 🧪  test/                 →  Suite de pruebas automatizadas con pytest
+│   ├── test_catalog.py       →  Pruebas de lógica y operaciones del catálogo
+│   ├── test_main.py          →  Pruebas de la interfaz de consola y menús
+│   └── test_validations.py   →  Pruebas de validaciones y casos límite
+└── ⚙️   pyproject.toml       →  Configuración del proyecto y dependencias (uv + pytest)
 ```
 
 > Arquitectura modular: cada archivo tiene **una sola responsabilidad**. Así de limpio.
@@ -56,11 +59,14 @@ reto-python-colecciones/
 git clone https://github.com/simonlopez25/reto-python-colecciones.git
 cd reto-python-colecciones
 
-# 2. Sincroniza el entorno virtual con uv
+# 2. Sincroniza el entorno virtual con uv (incluye dependencias de desarrollo)
 uv sync
 
 # 3. Ejecuta el programa
 uv run python main.py
+
+# 4. Ejecuta la suite de pruebas
+uv run pytest
 ```
 
 ---
@@ -150,6 +156,53 @@ required_keywords = {"usada", "certificada"}
 
 ---
 
+## 🧪 Pruebas Automatizadas con Pytest
+
+El proyecto cuenta con una suite completa de **46 pruebas unitarias y funcionales** implementadas con [`pytest`](https://docs.pytest.org/), garantizando la integridad de las operaciones, la robustez de las validaciones y el correcto comportamiento de la interfaz de consola interactiva.
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0
+rootdir: reto-python-colecciones
+configfile: pyproject.toml
+testpaths: test
+collected 46 items
+
+test\test_catalog.py ................                                    [ 34%]
+test\test_main.py .....                                                  [ 45%]
+test\test_validations.py .........................                       [100%]
+
+============================= 46 passed in 0.14s ==============================
+```
+
+### 📋 Cobertura de las Pruebas
+
+| Archivo de Prueba | Tests | ¿Qué verifica? | Herramientas clave |
+|-------------------|:-----:|----------------|--------------------|
+| `test/test_catalog.py` | 16 | • Adición de piezas con datos limpios (`strip`) y detección de IDs duplicados.<br/>• Búsqueda por ID existente / inexistente (`None`).<br/>• Eliminación de piezas y retorno de estado booleano.<br/>• Resumen y conteo de piezas agrupadas por categoría (`dict`).<br/>• Filtrado por categoría insensible a mayúsculas/minúsculas.<br/>• Filtrado por estado y por precio mínimo.<br/>• Cálculo de precio promedio y manejo de catálogo vacío.<br/>• Validación estricta de tipos de entrada (`TypeError`, `ValueError`). | `@pytest.fixture`, `pytest.raises` |
+| `test/test_validations.py` | 25 | • Campos no vacíos (`validate_not_empty`): cadenas vacías, espacios en blanco, `None`, tipos no-string.<br/>• Precios válidos (`validate_price`): números positivos, rechazo de `<= 0`, booleanos y tipos no numéricos.<br/>• Estados permitidos (`validate_status`): normalización (`strip`, `lower`) y rechazo de estados inválidos.<br/>• Descripciones (`validate_description`): presencia obligatoria de `"usada"` o `"certificada"`. | `@pytest.mark.parametrize`, `pytest.raises` |
+| `test/test_main.py` | 5 | • Renderizado visual del menú de consola principal.<br/>• Flujo interactivo completo de agregar pieza (`handle_add_piece`).<br/>• Listado de piezas con catálogo vacío vs. con elementos.<br/>• Salida limpia del programa mediante la opción 7. | `monkeypatch` (mock de `input`), `capsys` (inspección de `stdout`) |
+
+### ⚡ Comandos para Ejecutar las Pruebas
+
+```bash
+# Ejecutar toda la suite de pruebas
+uv run pytest
+
+# Ejecutar con salida detallada (verbose)
+uv run pytest -v
+
+# Ejecutar un módulo de pruebas específico
+uv run pytest test/test_catalog.py
+uv run pytest test/test_validations.py
+uv run pytest test/test_main.py
+
+# Ejecutar pruebas que coincidan con un nombre o patrón
+uv run pytest -k "average"
+```
+
+---
+
 ## 🧩 Conceptos de Python Aplicados
 
 <details>
@@ -194,6 +247,32 @@ total = sum(piece["price"] for piece in catalog)
 ```python
 for i, name in enumerate(pieces, start=1):
     print(f"{i}. {name}")
+```
+
+**✅ Fixtures de Pytest — datos de prueba limpios y reutilizables**
+```python
+@pytest.fixture
+def sample_catalog():
+    return [
+        {"id": "1", "name": "Anillo de Oro", "category": "Joyería", "price": 150.0, "status": "disponible", "description": "Anillo certificado"},
+    ]
+```
+
+**✅ Parametrización de tests (`@pytest.mark.parametrize`) — cobertura exhaustiva sin repetir código**
+```python
+@pytest.mark.parametrize("invalid_value", ["", "   ", None, 123])
+def test_validate_not_empty_invalid(invalid_value):
+    with pytest.raises(ValueError, match="El campo 'nombre' no puede estar vacío."):
+        validate_not_empty(invalid_value, "nombre")
+```
+
+**✅ Simulación de I/O (`monkeypatch`) y captura de salida (`capsys`) para la consola**
+```python
+def test_main_exit_option(monkeypatch, capsys):
+    monkeypatch.setattr("builtins.input", lambda _: "7")
+    main()
+    captured = capsys.readouterr()
+    assert "¡Gracias por utilizar el Catálogo de Coleccionables!" in captured.out
 ```
 
 **✅ `__name__ == "__main__"` — control del punto de entrada**
@@ -246,6 +325,7 @@ if __name__ == "__main__":
 | **Funciones puras** | Sin efectos secundarios inesperados; reciben y devuelven datos |
 | **`set` para validaciones** | Búsqueda en O(1) en vez de O(n) con `list` |
 | **`__name__ == "__main__"`** | `main()` solo se ejecuta como punto de entrada, no al importar |
+| **Testing automatizado (`pytest`)** | Suite completa de 46 pruebas para garantizar fiabilidad y prevenir regresiones |
 
 ---
 
