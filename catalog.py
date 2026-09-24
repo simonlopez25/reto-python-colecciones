@@ -5,6 +5,7 @@ from validations import (
     validate_status,
 )
 
+
 def add_piece(
         piece_id: str,
         name: str,
@@ -32,14 +33,12 @@ def add_piece(
 
 
 def list_pieces(catalog: list) -> list:
-
     if not isinstance(catalog, list):
         raise TypeError("El catálogo debe ser una lista.")
     return [piece["name"] for piece in catalog]
 
 
 def find_piece_by_id(catalog: list, piece_id: str) -> dict | None:
-
     if not isinstance(catalog, list):
         raise TypeError("El catálogo debe ser una lista.")
     clean_id = piece_id.strip()
@@ -51,7 +50,6 @@ def find_piece_by_id(catalog: list, piece_id: str) -> dict | None:
 
 
 def remove_piece(catalog: list, piece_id: str) -> bool:
-
     if not isinstance(catalog, list):
         raise TypeError("El catálogo debe ser una lista.")
     try:
@@ -64,13 +62,14 @@ def remove_piece(catalog: list, piece_id: str) -> bool:
     except ValueError:
         return False
 
+
 def get_catalog_summary(catalog: list) -> dict:
     if not isinstance(catalog, list):
         raise TypeError("El catálogo debe ser una lista.")
     summary = {}
     for piece in catalog:
         category = piece["category"]
-        summary[category] = summary.get(category, 0) + 1 #suma de 1 los productos que compartan las misma categoria
+        summary[category] = summary.get(category, 0) + 1  # suma de 1 los productos que compartan las misma categoria
     return summary
 
 
