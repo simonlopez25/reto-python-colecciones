@@ -1,5 +1,6 @@
 from validations import *
 
+
 def _validate_catalog(catalog: list):
     if not isinstance(catalog, list):
         raise TypeError("El catálogo debe ser una lista.")

@@ -63,7 +63,7 @@ def test_add_piece_duplicate_id(sample_catalog):
             category="Joyería",
             price=100.0,
             status="disponible",
-            description="Descripción de prueba",
+            description="Pieza usada de prueba",
         )
 
 
