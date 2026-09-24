@@ -87,3 +87,5 @@ elif menu == "Estadísticas":
     col1.metric("Precio Promedio", f"${avg_price:.2f}")
     col2.write("**Piezas por Categoría:**")
     col2.json(summary)
+
+    #para hacer que funcione streamlit run app.py
