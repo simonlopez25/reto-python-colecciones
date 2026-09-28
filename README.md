@@ -9,6 +9,7 @@
 [![Version](https://img.shields.io/badge/Versión-0.1.0-6366f1?style=for-the-badge&logoColor=white)](https://github.com/simonlopez25/reto-python-colecciones)
 [![Tests](https://img.shields.io/badge/Tests-46%20Passed-22c55e?style=for-the-badge&logo=pytest&logoColor=white)](#-pruebas-automatizadas-con-pytest)
 [![Pytest](https://img.shields.io/badge/Pytest-9.1.1-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](https://pytest.org/)
+[![BDD](https://img.shields.io/badge/BDD-30%20Escenarios-596127?style=for-the-badge&logo=cucumber&logoColor=white)](#-especificaciones-de-comportamiento-gherkin--bdd)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-ec4899?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](#)
 
 <br/>
@@ -39,7 +40,13 @@ reto-python-colecciones/
 │   ├── test_catalog.py       →  Pruebas de lógica y operaciones del catálogo
 │   ├── test_main.py          →  Pruebas de la interfaz de consola y menús
 │   └── test_validations.py   →  Pruebas de validaciones y casos límite
-└── ⚙️   pyproject.toml       →  Configuración del proyecto y dependencias (uv + pytest)
+├── 🥒  features/             →  Especificaciones de comportamiento en Gherkin (BDD)
+│   ├── catalog.feature       →  Escenarios del catálogo (16 escenarios)
+│   ├── main.feature          →  Escenarios del menú de consola (5 escenarios)
+│   └── validations.feature   →  Escenarios de validaciones (9 escenarios)
+├── ⚙️   pyproject.toml       →  Configuración del proyecto y dependencias (uv + pytest)
+├── 🔒  uv.lock               →  Versiones exactas del entorno de desarrollo
+└── 🚫  .gitignore            →  Exclusiones de .venv, __pycache__ y cachés
 ```
 
 > Arquitectura modular: cada archivo tiene **una sola responsabilidad**. Así de limpio.
@@ -76,28 +83,33 @@ uv run pytest
 Al iniciar el programa verás este menú:
 
 ```
-╔══════════════════════════════════════╗
-║      CATÁLOGO DE COLECCIONABLES      ║
-╠══════════════════════════════════════╣
-║  1. Agregar una pieza                ║
-║  2. Mostrar todas las piezas         ║
-║  3. Mostrar piezas disponibles       ║
-║  4. Mostrar el precio promedio       ║
-║  5. Buscar una pieza por ID          ║
-║  6. Eliminar una pieza               ║
-║  7. Salir                            ║
-╚══════════════════════════════════════╝
+========================================
+      CATÁLOGO DE COLECCIONABLES
+========================================
+1. Agregar una pieza
+2. Mostrar todas las piezas
+3. Mostrar piezas disponibles
+4. Mostrar el precio promedio
+5. Buscar una pieza por identificador
+6. Eliminar una pieza
+7. Salir
+========================================
+Seleccione una opción (1-7): 
 ```
 
-| # | Función en `main.py` | Descripción |
-|:-:|----------------------|-------------|
-| 1️⃣ | `handle_add_piece()` | Solicita los datos y agrega la pieza al catálogo |
-| 2️⃣ | `handle_list_pieces()` | Lista todos los nombres de las piezas registradas |
-| 3️⃣ | `handle_list_available()` | Muestra solo las piezas **disponibles** con su precio |
-| 4️⃣ | `handle_average_price()` | Calcula y muestra el precio promedio del catálogo |
-| 5️⃣ | `handle_find_piece()` | Busca una pieza por ID y muestra todos sus detalles |
-| 6️⃣ | `handle_remove_piece()` | Elimina una pieza del catálogo por su ID |
-| 7️⃣ | `main()` → salida | Cierra el programa con mensaje de despedida |
+| # | Opción del menú | Función en `main.py` | Descripción |
+|:-:|-----------------|----------------------|-------------|
+| 1️⃣ | Agregar una pieza | `handle_add_piece()` | Solicita los datos y agrega la pieza al catálogo (repite hasta que la validación pase) |
+| 2️⃣ | Mostrar todas las piezas | `handle_list_pieces()` | Lista los nombres de las piezas registradas con numeración desde 1 |
+| 3️⃣ | Mostrar piezas disponibles | `handle_list_available()` | Muestra solo las piezas **disponibles** con su precio |
+| 4️⃣ | Mostrar el precio promedio | `handle_average_price()` | Calcula y muestra el precio promedio del catálogo |
+| 5️⃣ | Buscar una pieza por ID | `handle_find_piece()` | Busca por ID y muestra todos sus detalles, o avisa si no existe |
+| 6️⃣ | Eliminar una pieza | `handle_remove_piece()` | Elimina una pieza por su ID e informa si tuvo éxito |
+| 7️⃣ | Salir | `main()` → `break` | Cierra el programa con mensaje de despedida |
+
+> ℹ️ Cualquier otra entrada muestra `Opción no válida. Por favor, seleccione un número entre 1 y 7.` y el menú se vuelve a dibujar.
+
+> ⚠️ **El catálogo vive en memoria.** Al cerrar el programa se pierde todo: no hay base de datos ni persistencia en archivo. Es una decisión consciente para mantener el reto enfocado en las colecciones nativas.
 
 ---
 
@@ -118,20 +130,26 @@ Todas las operaciones viven aquí. El catálogo es una `list` de `dict`s con est
 
 ### Funciones implementadas
 
-| Función | Colección usada | ¿Qué hace? |
-|---------|:--------------:|------------|
-| `add_piece(...)` | `dict` | Crea y devuelve un dict validado de la pieza |
-| `list_pieces(catalog)` | `list` | Devuelve lista con los nombres de todas las piezas |
-| `find_piece_by_id(catalog, id)` | `list` | Busca pieza por ID, retorna `None` si no existe |
-| `remove_piece(catalog, id)` | `list` | Elimina la pieza del catálogo, retorna `bool` |
-| `get_catalog_summary(catalog)` | `dict` | Agrupa y cuenta piezas por categoría |
-| `get_pieces_by_category(...)` | `list` | Filtra piezas por categoría (list comprehension) |
-| `piece_exists(catalog, id)` | `set` | Retorna `True/False` si la pieza existe |
-| `filter_by_status(catalog, status)` | `list` | Filtra piezas por estado |
-| `filter_by_min_price(catalog, p)` | `list` | Filtra piezas con precio mayor al mínimo |
-| `get_average_price(catalog)` | `list` | Calcula el precio promedio del catálogo |
+| Función | Colección usada | ¿Qué hace? | ¿En el menú? |
+|---------|:--------------:|-------------|:------------:|
+| `add_piece(...)` | `dict` | Crea, valida y agrega una pieza; devuelve el `dict` resultante | 1️⃣ |
+| `list_pieces(catalog)` | `list` | Devuelve lista con los nombres de todas las piezas | 2️⃣ |
+| `filter_by_status(catalog, status)` | `list` | Filtra piezas por estado, validando contra los permitidos | 3️⃣ |
+| `get_average_price(catalog)` | `list` | Calcula el precio promedio; devuelve `0.0` si el catálogo está vacío | 4️⃣ |
+| `find_piece_by_id(catalog, id)` | `list` | Busca pieza por ID con recorrido lineal; retorna `None` si no existe | 5️⃣ |
+| `remove_piece(catalog, id)` | `list` | Elimina la pieza del catálogo, retorna `bool` sin lanzar excepciones | 6️⃣ |
+| `get_catalog_summary(catalog)` | `dict` | Agrupa y cuenta piezas por categoría | — |
+| `get_pieces_by_category(catalog, cat)` | `list` | Filtra por categoría, insensible a mayúsculas (list comprehension) | — |
+| `filter_by_min_price(catalog, p)` | `list` | Filtra piezas con precio mayor o igual al mínimo | — |
+| `piece_exists(catalog, id)` | `list` | Retorna `True/False` delegando en `find_piece_by_id()` | — |
 
-> 💡 **Colecciones de Python usadas:** `list`, `dict`, `set` — ¡el reto se llama colecciones por algo! 🐍
+> 💡 **Colecciones de Python usadas:** `list` y `dict` para almacenar y manipular el catálogo, `set` en las validaciones — ¡el reto se llama colecciones por algo! 🐍
+
+### 🔍 Funciones que existen pero no están en el menú
+
+`get_catalog_summary()`, `get_pieces_by_category()`, `filter_by_min_price()` y `piece_exists()` están implementadas y cubiertas por pruebas, pero **ningún handler de `main.py` las expone todavía**. Son parte de la API pública de `catalog.py`: sirven como base para las opciones 7, 8, 9 y 10 del menú, o como puntos de extensión para quien reutilice el módulo.
+
+> ℹ️ `piece_exists()` delega en `find_piece_by_id()`, por lo que su costo es **O(n)**, no O(1). El `O(1)` real del proyecto viene de los `set` de `validations.py`.
 
 ---
 
@@ -141,18 +159,20 @@ Nada entra al catálogo sin pasar por este filtro. Las validaciones lanzan `Valu
 
 ```python
 # Estados permitidos (set para búsqueda O(1))
-allowed_statuses = {"disponible", "reservado", "vendida"}
+allowed_statuses = {"disponible", "reservado", "reservada", "vendida"}
 
 # Palabras clave requeridas en la descripción
 required_keywords = {"usada", "certificada"}
 ```
 
-| Función | ¿Qué valida? |
-|---------|-------------|
-| `validate_not_empty(value, field)` | Que el campo no sea vacío ni solo espacios |
-| `validate_price(price)` | Que el precio sea un número válido y mayor a `0` |
-| `validate_status(status)` | Que el estado sea uno de los tres permitidos |
-| `validate_description(description)` | Que incluya `'usada'` o `'certificada'` |
+| Función | ¿Qué valida? | Error que lanza |
+|---------|---------------|-----------------|
+| `validate_not_empty(value, field_name)` | Que el campo sea `str` y no esté vacío ni solo espacios | `ValueError` |
+| `validate_price(price)` | Que sea `int`/`float` (rechaza `bool`) y mayor a `0` | `ValueError` |
+| `validate_status(status)` | Que normalizado (`strip` + `lower`) esté en `allowed_statuses` | `ValueError` |
+| `validate_description(description)` | Que no esté vacía e incluya `'usada'` o `'certificada'` | `ValueError` |
+
+> ⚠️ **Pendiente de unificar:** `allowed_statuses` acepta cuatro valores, incluyendo tanto `"reservado"` como `"reservada"`, pero el prompt de `main.py:34` solo anuncia tres (`disponible, reservada, vendida`). Conviene decidir la forma canónica y alinear las tres fuentes: el `set`, el prompt del menú y las specs de `features/`.
 
 ---
 
@@ -200,6 +220,65 @@ uv run pytest test/test_main.py
 # Ejecutar pruebas que coincidan con un nombre o patrón
 uv run pytest -k "average"
 ```
+
+---
+
+## 🥒 Especificaciones de Comportamiento (Gherkin / BDD)
+
+Cada prueba nace primero como un **escenario de negocio legible**, escrito en Gherkin dentro de `features/`. Cada escenario declara explícitamente a qué test de `pytest` corresponde, así que la especificación y la verificación nunca se separan.
+
+```gherkin
+# features/catalog.feature
+Feature: Piece catalog management
+
+  # Test: test_add_piece_duplicate_id
+  Scenario: Reject piece with duplicate ID
+    Given a sample catalog with 3 pieces exists
+    When attempting to add a piece with ID "1"
+    Then the system returns the error "Ya existe una pieza con el ID '1'."
+```
+
+### Escenarios por archivo
+
+| Archivo | Escenarios | Cubre |
+|---------|:----------:|-------|
+| `features/catalog.feature` | 16 | Alta, duplicados, búsqueda, existencia, eliminación, resumen por categoría, filtros por categoría/estado/precio, precio promedio y catálogo vacío |
+| `features/validations.feature` | 9 | Casos válidos e inválidos de nombre, precio, estado y descripción, con el mensaje de error exacto esperado |
+| `features/main.feature` | 5 | Renderizado del menú, salida por opción 7, alta interactiva y listado con y sin piezas |
+| **Total** | **30** | |
+
+### Cómo se relacionan con `pytest`
+
+- El comentario `# Test: <nombre>` es el **enlace explícito** entre el escenario y su test.
+- Los archivos `.feature` son **especificación ejecutable por personas, no por máquina**: el proyecto **no** instala `pytest-bdd`, así que `uv run pytest` solo corre los tests de `test/`, nunca los `.feature`.
+- Valor real: al leer `features/validations.feature` se entiende el contrato esperado de cada validación sin abrir ningún `.py`; y al abrir el test se sabe qué requisito satisface.
+- Si se quisiera ejecutarlos, bastaría añadir `pytest-bdd` al grupo `dev` y una función `step` por línea de Given/When/Then.
+
+---
+
+## 📐 Convenciones de Calidad
+
+### Guardia de tipos del catálogo
+
+Todas las funciones públicas de `catalog.py` pasan primero por `_validate_catalog()`:
+
+```python
+def _validate_catalog(catalog: list):
+    if not isinstance(catalog, list):
+        raise TypeError("El catálogo debe ser una lista.")
+```
+
+Se lanza `TypeError` (no `ValueError`) porque el error es de **tipo**, no de valor. Esto obliga al cliente a tratar las condiciones de uso incorrecto y los datos inválidos por separado.
+
+### Errores: `ValueError` vs. retorno
+
+| Situación | Estrategia | Ejemplo |
+|-----------|-----------|---------|
+| La entrada del usuario es inválida | Lanzar `ValueError` con mensaje accionable | `add_piece()` con ID duplicado |
+| La consulta no encuentra nada | Retornar `None` | `find_piece_by_id()` |
+| La operación es idempotente y su resultado es binario | Retornar `bool` | `remove_piece()` captura internamente el `ValueError` y devuelve `False` |
+
+> 💡 `remove_piece()` en `catalog.py:61` es el ejemplo canónico: lanza un `ValueError` con detalle y lo captura en su propio `except ValueError` para devolver `False`, de modo que el menú nunca recibe una excepción.
 
 ---
 
@@ -288,31 +367,38 @@ if __name__ == "__main__":
 ## 🔄 Flujo de Datos
 
 ```
-                    👤 Usuario
+                     👤 Usuario
+                         │
+                         ▼
+               ┌─────────────────┐
+               │    main.py      │  ← Menú interactivo + handlers
+               └────────┬────────┘
                         │
-                        ▼
-              ┌─────────────────┐
-              │    main.py      │  ← Menú interactivo + handlers
-              └────────┬────────┘
-                       │
-       ┌───────────────┼───────────────┐
-       ▼               ▼               ▼
-  add_piece()    list_pieces()   filter_by_status()
-  find_piece()   remove_piece()  get_average_price()
-       │               │               │
-       └───────────────┴───────────────┘
-                        │
-                        ▼
-              ┌─────────────────┐
-              │ validations.py  │  ← Guardián de datos
-              └────────┬────────┘
-                       │
-                        ▼
-              ┌─────────────────┐
-              │ catalog: list   │  ← [{"id":..., "name":..., ...}]
-              │    de dicts     │
-              └─────────────────┘
+        ┌───────────────┼───────────────┐
+        ▼               ▼               ▼
+   add_piece()    list_pieces()   filter_by_status()
+   find_piece()   remove_piece()  get_average_price()
+        │               │               │
+        └───────┬───────┴───────────────┘
+                │
+                ▼
+       ┌──────────────────┐
+       │ _validate_catalog│  ← TypeError si no es list
+       └────────┬─────────┘
+                │
+                ▼
+       ┌──────────────────┐
+       │  validations.py  │  ← Guardián de datos (ValueError)
+       └────────┬─────────┘
+                │
+                ▼
+       ┌──────────────────┐
+       │ catalog: list    │  ← [{"id":..., "name":..., ...}]
+       │    de dicts      │
+       └──────────────────┘
 ```
+
+> 🔁 En paralelo, `test/` verifica este flujo y `features/` lo especifica: 30 escenarios Gherkin enlazados uno a uno con los tests que los cubren.
 
 ---
 
@@ -324,8 +410,28 @@ if __name__ == "__main__":
 | **Separación de responsabilidades** | `main.py` → UI · `catalog.py` → lógica · `validations.py` → datos |
 | **Funciones puras** | Sin efectos secundarios inesperados; reciben y devuelven datos |
 | **`set` para validaciones** | Búsqueda en O(1) en vez de O(n) con `list` |
+| **`TypeError` para tipos, `ValueError` para contenido** | Distingue el error de uso del API del error de dato inválido |
+| **Búsqueda lineal, sin índices** | El catálogo es pequeño; evita la complejidad de un índice que habría que mantener al agregar y eliminar |
+| **Catálogo en memoria** | Evita dependencias externas; el alcance del reto son las colecciones, no la persistencia |
+| **Especificación antes que test** | `features/` documenta el comportamiento esperado en lenguaje de negocio, enlazado a cada test |
 | **`__name__ == "__main__"`** | `main()` solo se ejecuta como punto de entrada, no al importar |
 | **Testing automatizado (`pytest`)** | Suite completa de 46 pruebas para garantizar fiabilidad y prevenir regresiones |
+| **Dependencias de desarrollo aisladas** | `pytest` vive en `[dependency-groups] dev`, así que `uv sync --no-dev` instala un runtime con cero dependencias |
+
+---
+
+## 🧭 Deuda técnica conocida
+
+Pequeños pendientes detectados al revisar el código, gathering para futuras iteraciones:
+
+| # | Pendiente | Dónde | Impacto |
+|:-:|-----------|-------|---------|
+| 1 | Los estados están desalineados en tres sitios: `allowed_statuses` acepta `reservado` y `reservada`, el prompt solo anuncia tres, y la fixture de `test_catalog.py:21` usa `"vendido"`, un valor que **`validate_status()` rechazaría** | `validations.py:1`, `main.py:34`, `test/test_catalog.py:21` | Alto: la fixture contiene datos que el sistema no permitiría crear |
+| 2 | Cuatro funciones probadas no están expuestas en el menú | `main.py` | Funcionalidad oculta |
+| 3 | `handle_list_available()` captura un `ValueError` que nunca puede ocurrir con el literal `"disponible"` | `main.py:57-68` | Código muerto |
+| 4 | `from catalog import *` / `from validations import *` sin `__all__` | `main.py:1`, `catalog.py:1` | Import implícito, herramientas no detectan dependencias |
+| 5 | `remove_piece()` lanza y captura su propio `ValueError` para devolver `False` | `catalog.py:61-71` | Sobrecarga; un `if` directo sería más claro |
+| 6 | `.pyc` de `__pycache__` estaban versionados en el repo | `.gitignore` | Ruido en el historial |
 
 ---
 
